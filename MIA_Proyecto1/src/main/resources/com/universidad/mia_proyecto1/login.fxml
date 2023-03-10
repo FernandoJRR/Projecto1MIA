@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox alignment="CENTER" spacing="20.0" 
+    xmlns="http://javafx.com/javafx/8.0.171" 
+    xmlns:fx="http://javafx.com/fxml/1" 
+    fx:controller="com.universidad.mia_proyecto1.controllers.LoginController">
+
+   <children>
+        <!-- Title -->
+        <Label layoutX="150.0" layoutY="40.0" prefHeight="20.0" prefWidth="100.0" style="-fx-text-fill: #219ebc;" text="LOGIN">
+            <font>
+                <Font name="System Bold" size="25.0" />
+            </font>
+        </Label> 
+       <TextField fx:id="usernameTextField" layoutX="80.0" layoutY="345.0" 
+                  prefHeight="35.0" prefWidth="245.0" 
+                  promptText="Username">
+            <font>
+                <Font size="15.0" />
+            </font>
+        </TextField>
+        <PasswordField fx:id="passwordField" layoutX="80.0" layoutY="400.0" 
+                       prefHeight="35.0" prefWidth="245.0" 
+                       promptText="Password">
+            <font>
+                <Font size="15.0" />
+            </font>
+        </PasswordField>
+
+        <!-- Mensaje de exito o error -->
+        <Label fx:id="invalidDetails" layoutX="88.0" layoutY="446.0" prefWidth="245.0" textFill="RED" />
+
+        <Button fx:id="loginButton" layoutX="225.0" layoutY="480.0" mnemonicParsing="false" onAction="#onLoginButtonClick" 
+            prefHeight="30.0" prefWidth="90.0" 
+            style="-fx-background-color: #0077b6; -fx-border-radius: 5;" text="Login" textFill="WHITE">
+
+            <font>
+                <Font size="15.0" />
+            </font>
+        </Button>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>
