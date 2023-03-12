@@ -5,7 +5,14 @@
 package com.universidad.mia_proyecto1.controllers;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+
+import com.universidad.mia_proyecto1.database.LoginUsuario;
+import com.universidad.mia_proyecto1.exceptions.PasswordIncorrecto;
+import com.universidad.mia_proyecto1.exceptions.UsuarioNoExisteException;
+import com.universidad.mia_proyecto1.modelo.Usuario;
+import com.universidad.mia_proyecto1.utilidades.ConvertidorHash;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -74,17 +81,28 @@ public class LoginController implements Initializable {
                 }
             }
         } else {
-            // Se comprueba si las credenciales son correctas
-            if (passwordField.getText().length() < 4) {
-                invalidDetails.setText("The Password can't be less than 4 characters!");
-                invalidDetails.setStyle(formatoMensajeError);
-                passwordField.setStyle(estiloError);
-            } else {
-            // Si las credenciales son correctas se inicia sesion
-                invalidDetails.setText("Se inicia sesion");
+            //Se comprueba si las credenciales son correctas
+            try {
+                //Si lo son se inicia sesion
+                String passwordSHA = ConvertidorHash.stringSHA256(passwordField.getText());
+                Usuario usuario = LoginUsuario.comprobarCredenciales(usernameTextField.getText(), passwordSHA);
+                invalidDetails.setText("Se inicia sesion con: "+usuario.getUsername()+" "+usuario.getTipo());
                 invalidDetails.setStyle(formatoMensajeExito);
                 usernameTextField.setStyle(estiloExito);
                 passwordField.setStyle(estiloExito);
+            //Si no lo son se imprime un error
+            } catch (UsuarioNoExisteException|PasswordIncorrecto e) {
+                invalidDetails.setText(e.getMessage());
+                invalidDetails.setStyle(formatoMensajeError);
+                passwordField.setStyle(estiloError);
+            } catch (SQLException e) {
+                invalidDetails.setText("Ha ocurrido un error, intenta mas tarde");
+                invalidDetails.setStyle(formatoMensajeError);
+                passwordField.setStyle(estiloError);
+            } catch (Exception e) {
+                invalidDetails.setText("Ha ocurrido un error, intenta mas tarde");
+                invalidDetails.setStyle(formatoMensajeError);
+                passwordField.setStyle(estiloError);
             }
         }
     }
