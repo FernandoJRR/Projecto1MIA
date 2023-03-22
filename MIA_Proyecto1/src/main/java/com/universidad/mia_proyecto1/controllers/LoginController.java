@@ -8,6 +8,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import com.universidad.mia_proyecto1.App;
 import com.universidad.mia_proyecto1.database.LoginUsuario;
 import com.universidad.mia_proyecto1.exceptions.PasswordIncorrecto;
 import com.universidad.mia_proyecto1.exceptions.UsuarioNoExisteException;
@@ -86,10 +87,24 @@ public class LoginController implements Initializable {
                 //Si lo son se inicia sesion
                 String passwordSHA = ConvertidorHash.stringSHA256(passwordField.getText());
                 Usuario usuario = LoginUsuario.comprobarCredenciales(usernameTextField.getText(), passwordSHA);
-                invalidDetails.setText("Se inicia sesion con: "+usuario.getUsername()+" "+usuario.getTipo());
-                invalidDetails.setStyle(formatoMensajeExito);
-                usernameTextField.setStyle(estiloExito);
-                passwordField.setStyle(estiloExito);
+                switch (usuario.getTipo()) {
+                    case "administrador":
+                        App.sesionUser = usuario.getUsername();
+                        App.sesionTipo = usuario.getTipo();
+                        App.setRoot("administrador/administradorView");
+                        break;
+                    case "bodega":
+                        App.sesionUser = usuario.getUsername();
+                        App.sesionTipo = usuario.getTipo();
+                        App.setRoot("bodega/bodegaView");
+                        break;
+                    case "vendedor":
+                        System.out.println("View a Bodega");
+                        break;
+                    case "inventario":
+                        System.out.println("View a Bodega");
+                        break;
+                }
             //Si no lo son se imprime un error
             } catch (UsuarioNoExisteException|PasswordIncorrecto e) {
                 invalidDetails.setText(e.getMessage());
@@ -99,10 +114,12 @@ public class LoginController implements Initializable {
                 invalidDetails.setText("Ha ocurrido un error, intenta mas tarde");
                 invalidDetails.setStyle(formatoMensajeError);
                 passwordField.setStyle(estiloError);
+                e.printStackTrace();
             } catch (Exception e) {
                 invalidDetails.setText("Ha ocurrido un error, intenta mas tarde");
                 invalidDetails.setStyle(formatoMensajeError);
                 passwordField.setStyle(estiloError);
+                e.printStackTrace();
             }
         }
     }

@@ -7,14 +7,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.List;
 
-import com.universidad.mia_proyecto1.database.Conexion;
-import com.universidad.mia_proyecto1.database.LoginUsuario;
-import com.universidad.mia_proyecto1.exceptions.PasswordIncorrecto;
-import com.universidad.mia_proyecto1.exceptions.UsuarioNoExisteException;
-import com.universidad.mia_proyecto1.modelo.Usuario;
-import com.universidad.mia_proyecto1.utilidades.ConvertidorHash;
+import com.universidad.mia_proyecto1.database.ModeloBodega;
+import com.universidad.mia_proyecto1.database.ModeloReporte;
+import com.universidad.mia_proyecto1.modelo.Producto;
 
 /**
  * JavaFX App
@@ -22,10 +19,14 @@ import com.universidad.mia_proyecto1.utilidades.ConvertidorHash;
 public class App extends Application {
 
     private static Scene scene;
+    
+    public static String sesionUser = null;
+    public static String sesionTipo = null;
+    public static String sesionSucursal = null;
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("login"), 640, 480);
+        scene = new Scene(loadFXML("login"), 900, 600);
         stage.setScene(scene);
         stage.show();
     }
@@ -40,6 +41,18 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        /* 
+        try {
+            List<Producto> productosBodega = ModeloBodega.getProductos();
+            System.out.println("ID\tCodigo\tNombre");
+            for (Producto producto : productosBodega) {
+                System.out.println(producto.getId()+" "+producto.getCodigo()+" "+producto.getNombre());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        */
+
         launch();
     }
     
