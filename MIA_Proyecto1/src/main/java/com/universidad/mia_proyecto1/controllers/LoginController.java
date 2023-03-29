@@ -99,14 +99,24 @@ public class LoginController implements Initializable {
                         App.setRoot("bodega/bodegaView");
                         break;
                     case "vendedor":
-                        System.out.println("View a Bodega");
+                        App.sesionUser = usuario.getUsername();
+                        App.sesionTipo = usuario.getTipo();
+                        App.sesionSucursal = usuario.getSucursal();
+                        App.setRoot("vendedor/vendedorView");
                         break;
                     case "inventario":
-                        System.out.println("View a Bodega");
+                        App.sesionUser = usuario.getUsername();
+                        App.sesionTipo = usuario.getTipo();
+                        App.sesionSucursal = usuario.getSucursal();
+                        App.setRoot("inventario/inventarioView");
                         break;
                 }
             //Si no lo son se imprime un error
-            } catch (UsuarioNoExisteException|PasswordIncorrecto e) {
+            } catch (UsuarioNoExisteException e) {
+                invalidDetails.setText("El username: "+e.getMessage()+" no existe");
+                invalidDetails.setStyle(formatoMensajeError);
+                usernameTextField.setStyle(estiloError);
+            } catch (PasswordIncorrecto e) {
                 invalidDetails.setText(e.getMessage());
                 invalidDetails.setStyle(formatoMensajeError);
                 passwordField.setStyle(estiloError);

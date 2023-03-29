@@ -8,9 +8,19 @@ import java.util.List;
 import com.universidad.mia_proyecto1.exceptions.ProductoDuplicadoException;
 import com.universidad.mia_proyecto1.exceptions.ProductoNoExisteException;
 import com.universidad.mia_proyecto1.modelo.Producto;
+import com.universidad.mia_proyecto1.modelo.ProductoIngresado;
 
 public class ModeloBodega {
-    public static void ingresarProductoExistente(String codigo, int cantidad) throws SQLException, Exception{
+    public static void ingresarProductoExistente(String codigo, int cantidad) throws SQLException, ProductoNoExisteException, Exception{
+        //Se comprueba si el codigo del producto ya existe
+        Conexion.crearConexion("gestor_bodega01", "bodega_01");
+        java.sql.PreparedStatement select = Conexion.databaseConnection.prepareStatement("SELECT * FROM control_productos.producto WHERE codigo = ?");
+        select.setString(1, codigo);
+
+        ResultSet resultado = select.executeQuery();
+        if (!resultado.next()) {
+            throw new ProductoNoExisteException(codigo);
+        } 
         for (int i = 0; i < cantidad; i++) {
             Conexion.crearConexion("gestor_bodega01", "bodega_01");
             java.sql.PreparedStatement insert = Conexion.databaseConnection.prepareStatement("""
@@ -27,7 +37,7 @@ public class ModeloBodega {
         }
     }
 
-    public static void ingresarProductoNuevo(String codigo, String nombre, float precio, int cantidad) throws SQLException, Exception{
+    public static void ingresarProductoNuevo(String codigo, String nombre, float precio, int cantidad) throws SQLException, ProductoDuplicadoException, Exception{
         //Se comprueba si el codigo del producto ya existe
         Conexion.crearConexion("gestor_bodega01", "bodega_01");
         java.sql.PreparedStatement select = Conexion.databaseConnection.prepareStatement("SELECT * FROM control_productos.producto WHERE codigo = ?");
@@ -65,7 +75,7 @@ public class ModeloBodega {
         }
     }
     
-    public static void modificarCodigoProducto(String antiguoCodigo, String nuevoCodigo) throws SQLException, Exception{
+    public static void modificarCodigoProducto(String antiguoCodigo, String nuevoCodigo) throws SQLException, ProductoNoExisteException, ProductoDuplicadoException, Exception{
         //Se comprueba si el codigo a cambiar del producto existe
         Conexion.crearConexion("gestor_bodega01", "bodega_01");
         java.sql.PreparedStatement selectViejo = Conexion.databaseConnection.prepareStatement("SELECT * FROM control_productos.producto WHERE codigo = ?");
@@ -98,7 +108,7 @@ public class ModeloBodega {
         insertProducto.executeUpdate();
     }
 
-    public static void modificarNombreProducto(String codigo, String nuevoNombre) throws SQLException, Exception{
+    public static void modificarNombreProducto(String codigo, String nuevoNombre) throws SQLException, ProductoNoExisteException, Exception{
         //Se comprueba si el codigo a cambiar del producto existe
         Conexion.crearConexion("gestor_bodega01", "bodega_01");
         java.sql.PreparedStatement selectViejo = Conexion.databaseConnection.prepareStatement("SELECT * FROM control_productos.producto WHERE codigo = ?");
@@ -121,7 +131,7 @@ public class ModeloBodega {
         insertProducto.executeUpdate();
     }
 
-    public static void modificarPrecioProducto(String codigo, float nuevoPrecio) throws SQLException, Exception{
+    public static void modificarPrecioProducto(String codigo, float nuevoPrecio) throws SQLException, ProductoNoExisteException, Exception{
         //Se comprueba si el codigo a cambiar del producto existe
         Conexion.crearConexion("gestor_bodega01", "bodega_01");
         java.sql.PreparedStatement selectViejo = Conexion.databaseConnection.prepareStatement("SELECT * FROM control_productos.producto WHERE codigo = ?");
@@ -144,7 +154,7 @@ public class ModeloBodega {
         insertProducto.executeUpdate();
     }
     
-    public static List<Producto> getProductos() throws SQLException, Exception{
+    public static List<ProductoIngresado> getProductosIngresados() throws SQLException, Exception{
         Conexion.crearConexion("gestor_bodega01", "bodega_01");
         java.sql.Statement select = Conexion.databaseConnection.createStatement();
         ResultSet resultado = select.executeQuery("""
@@ -155,9 +165,25 @@ public class ModeloBodega {
           WHERE en_bodega = true;
         """);
         
+        List<ProductoIngresado> productosList = new ArrayList<ProductoIngresado>();
+        while (resultado.next()) {
+            productosList.add(new ProductoIngresado(resultado.getInt(1), resultado.getString(2), resultado.getString(3)));
+        }
+        
+        return productosList;
+    }
+    
+    public static List<Producto> getProductos() throws SQLException, Exception{
+        Conexion.crearConexion("gestor_bodega01", "bodega_01");
+        java.sql.Statement select = Conexion.databaseConnection.createStatement();
+        ResultSet resultado = select.executeQuery("""
+        SELECT codigo,nombre,precio 
+          FROM control_productos.producto
+        """);
+        
         List<Producto> productosList = new ArrayList<Producto>();
         while (resultado.next()) {
-            productosList.add(new Producto(resultado.getInt(1), resultado.getString(2), resultado.getString(3)));
+            productosList.add(new Producto(resultado.getString(1), resultado.getString(2), ((Float)resultado.getFloat(3))));
         }
         
         return productosList;

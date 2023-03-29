@@ -165,7 +165,7 @@ public class GestionUsuariosViewController implements Initializable {
                     usernameField.getText(), 
                     passwordField.getText(), 
                     tipoSelector.getValue().toLowerCase(), 
-                    tipoSelector.getValue().equals("Administrador")||tipoSelector.getValue().equals("Bodega")? null : tipoSelector.getValue() 
+                    sucursalSelector.getValue().toLowerCase()
                 );
                 invalidDetails.setText("Usuario Ingresado!");
                 invalidDetails.setStyle(formatoMensajeExito);

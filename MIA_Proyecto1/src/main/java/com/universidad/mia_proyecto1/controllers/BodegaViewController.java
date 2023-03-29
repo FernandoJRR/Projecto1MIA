@@ -36,10 +36,20 @@ public class BodegaViewController implements Initializable {
 
     @FXML
     private void onIngresarProductosButtonClick(){
+        try {
+            App.setRoot("bodega/ingresarProductosView");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     @FXML
     private void onModificarProductosButtonClick(){
+        try {
+            App.setRoot("bodega/modificarProductosView");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     @FXML
@@ -47,6 +57,7 @@ public class BodegaViewController implements Initializable {
         try {
             App.sesionUser = null;
             App.sesionTipo = null;
+            App.sesionSucursal = null;
             App.setRoot("login");
         } catch (IOException e) {
             e.printStackTrace();

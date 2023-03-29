@@ -13,10 +13,8 @@ import java.util.ResourceBundle;
 import com.universidad.mia_proyecto1.App;
 import com.universidad.mia_proyecto1.database.ModeloReporte;
 import com.universidad.mia_proyecto1.modelo.Duo;
-import com.universidad.mia_proyecto1.modelo.Producto;
 import com.universidad.mia_proyecto1.modelo.Reporte;
 import com.universidad.mia_proyecto1.modelo.Trio;
-import com.universidad.mia_proyecto1.utilidades.ValueFactoryArreglo;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

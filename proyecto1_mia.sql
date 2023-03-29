@@ -95,8 +95,8 @@ CREATE SCHEMA control_ventas;
 CREATE TABLE control_ventas.venta (
   codigo SERIAL NOT NULL,
   vendedor VARCHAR NOT NULL,
-  cliente INT NOT NULL,
-  descuento FLOAT,
+  cliente INT,
+  descuento FLOAT NOT NULL,
 
   PRIMARY KEY(codigo),
   FOREIGN KEY(vendedor) REFERENCES control_usuarios.usuario(username),
@@ -104,23 +104,23 @@ CREATE TABLE control_ventas.venta (
 );
 
 INSERT INTO control_ventas.venta ( vendedor, cliente, descuento ) VALUES 
-( 'v_norte01', 5437845, null ),
-( 'v_norte02', 8465161, null ),
-( 'v_norte02', 5437845, null ),
-( 'v_norte02', 3454367, null ),
-( 'v_norte03', 1551906, null ),
+( 'v_norte01', 5437845, 0 ),
+( 'v_norte02', 8465161, 0 ),
+( 'v_norte02', 5437845, 0 ),
+( 'v_norte02', 3454367, 0 ),
+( 'v_norte03', 1551906, 0 ),
 
-( 'v_sur01', 1551906, null ),
-( 'v_sur01', 5221524, null ),
-( 'v_sur01', 1551906, null ),
-( 'v_sur02', 5690304, null ),
-( 'v_sur02', 7956834, null ),
+( 'v_sur01', 1551906, 0 ),
+( 'v_sur01', 5221524, 0 ),
+( 'v_sur01', 1551906, 0 ),
+( 'v_sur02', 5690304, 0 ),
+( 'v_sur02', 7956834, 0 ),
 
-( 'v_central01', 1551906, null ),
-( 'v_central02', 7956834, null ),
-( 'v_central03', 8465161, null ),
-( 'v_central03', 5221524, null ),
-( 'v_central03', 5690304, null );
+( 'v_central01', 1551906, 0 ),
+( 'v_central02', 7956834, 0 ),
+( 'v_central03', 8465161, 0 ),
+( 'v_central03', 5221524, 0 ),
+( 'v_central03', 5690304, 0 );
 
 --Productos
 CREATE SCHEMA control_productos;
@@ -128,7 +128,7 @@ CREATE SCHEMA control_productos;
 CREATE TABLE control_productos.producto (
   codigo VARCHAR NOT NULL,
   nombre VARCHAR NOT NULL,
-  precio FLOAT NOT NULL,
+  precio DECIMAL(20,2) NOT NULL,
 
   PRIMARY KEY(codigo)
 );
@@ -305,6 +305,12 @@ INSERT INTO control_productos.producto_ingresado (
 ( '451232', null, false, 10 ),
 ( '451232', null, false, 10 ),
 ( '451232', null, false, 1 );
+
+--Roles
+---Administrador
+---Bodega
+---Inventario
+---Ventas
 
 -------------------ADMINISTRADOR--------------------------------
 -- Permisos de roles
@@ -526,6 +532,10 @@ UPDATE control_productos.producto
   SET precio = 0.0
   WHERE codigo = 'codigo_producto';
 
+-- Select productos
+SELECT codigo,nombre,precio 
+  FROM control_productos.producto;
+
 -- Select productos de bodega
 SELECT id, codigo, nombre 
   FROM control_productos.producto_ingresado
@@ -534,21 +544,99 @@ SELECT id, codigo, nombre
   WHERE en_bodega = true;
 
 --------------------------INVENTARIO-------------------------------
+-- Permisos de roles
+GRANT USAGE ON SCHEMA control_productos TO gestor_inventario_electronic_homes;
+
+GRANT UPDATE,SELECT ON TABLE control_productos.producto_ingresado TO gestor_inventario_electronic_homes;
+GRANT SELECT ON TABLE control_productos.producto TO gestor_inventario_electronic_homes;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA control_productos TO gestor_inventario_electronic_homes;
+
+CREATE USER gestor_inventario01 WITH PASSWORD 'inventario01';
+GRANT gestor_inventario_electronic_homes TO gestor_inventario01;
+
+-- Seleccionar productos FUERA de la sucursal
+SELECT id, codigo_producto, nombre, sucursal, en_bodega 
+  FROM control_productos.producto_ingresado
+  JOIN control_productos.producto
+  ON codigo_producto = codigo
+  WHERE codigo_venta IS NULL AND (sucursal != 'central' OR sucursal IS NULL)
+;
+
+-- Seleccionar productos EN la sucursal
+SELECT id, codigo_producto, nombre
+  FROM control_productos.producto_ingresado
+  JOIN control_productos.producto
+  ON codigo_producto = codigo
+  WHERE codigo_venta IS NULL AND sucursal = 'central'
+;
+
+-- Seleccionar producto existe
+SELECT *
+  FROM control_productos.producto_ingresado
+  WHERE codigo_venta IS NULL AND id = 5
+;
+
 -- Mover producto a sucursal
 UPDATE control_productos.producto_ingresado
   SET sucursal = 'sucursal',
   en_bodega = false
-  WHERE id = 'id_producto';
+  WHERE id = 'id_producto'
+;
 
 -------------------------VENDEDOR----------------------------------
+-- Permisos de roles
+GRANT USAGE ON SCHEMA control_clientes TO vendedor_electronic_homes;
+GRANT USAGE ON SCHEMA control_productos TO vendedor_electronic_homes;
+GRANT USAGE ON SCHEMA control_ventas TO vendedor_electronic_homes;
+
+GRANT INSERT,UPDATE,SELECT ON TABLE control_clientes.cliente TO vendedor_electronic_homes;
+GRANT UPDATE,SELECT ON TABLE control_productos.producto_ingresado TO vendedor_electronic_homes;
+GRANT SELECT ON TABLE control_productos.producto TO vendedor_electronic_homes;
+GRANT INSERT,SELECT ON TABLE control_ventas.venta TO vendedor_electronic_homes;
+GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA control_productos TO vendedor_electronic_homes;
+GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA control_ventas TO vendedor_electronic_homes;
+
+CREATE USER vendedor01 WITH PASSWORD 'vendedor01';
+GRANT vendedor_electronic_homes TO vendedor01;
+
+-- Select cliente
+SELECT *
+  FROM control_clientes.cliente
+  WHERE nit = 1551906
+;
+
+-- Select ultima venta de cliente
+SELECT *
+  FROM control_ventas.venta
+  WHERE cliente = 1551906
+  ORDER BY codigo DESC
+  LIMIT 1
+;
+
+-- Total ultima venta cliente
+SELECT SUM(precio) as total
+  FROM control_productos.producto_ingresado
+  JOIN control_productos.producto
+  ON codigo_producto = codigo
+  WHERE codigo_venta = 11
+;
+
 -- Crear nueva venta (cliente existente)
 INSERT INTO control_ventas.venta ( vendedor, cliente, descuento ) VALUES 
-( 'username_vendedor', 000000000, null );
+( 'username_vendedor', 000000000, null ) 
+;
+
+-- Select ultima venta
+SELECT *
+  FROM control_ventas.venta
+  ORDER BY codigo DESC
+  LIMIT 1
+;
 
   -- Para cada producto comprado
 UPDATE control_productos.producto_ingresado
-  SET codigo_venta = 00000000,
-  sucursal = null,
+  SET codigo_venta = last_venta,
+  sucursal = null
   WHERE id = 'id_producto';
 
 -- Crear nueva venta (consumidor final)
@@ -574,10 +662,19 @@ UPDATE control_productos.producto_ingresado
   sucursal = null,
   WHERE id = 'id_producto';
 
+-- Select productos en venta de la sucursal
+SELECT id, codigo, nombre, precio
+  FROM control_productos.producto_ingresado
+  JOIN control_productos.producto
+  ON codigo_producto = codigo
+  WHERE sucursal = 'norte'
+;
+
 -- Modificar NIT de comprador
 UPDATE control_clientes.cliente
   SET nit = 000000000
-  WHERE nit = 111111111;
+  WHERE nit = 111111111
+;
 
 -- Modificar nombre de comprador
 UPDATE control_clientes.cliente

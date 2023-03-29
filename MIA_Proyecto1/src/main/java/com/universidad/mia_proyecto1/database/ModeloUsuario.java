@@ -46,7 +46,7 @@ public class ModeloUsuario {
         }
 
         Conexion.crearConexion("administrador01", "admin_01");
-        java.sql.PreparedStatement insert = Conexion.databaseConnection.prepareStatement("INSERT INTO control_usuarios.usuario VALUES (?,?,?,?)");
+        java.sql.PreparedStatement insert = Conexion.databaseConnection.prepareStatement("INSERT INTO control_usuarios.usuario (tipo, username, password, sucursal) VALUES (?,?,?,?)");
 
         switch (tipo) {
             case "administrador":

@@ -57,6 +57,7 @@ public class AdministradorViewController implements Initializable {
         try {
             App.sesionUser = null;
             App.sesionTipo = null;
+            App.sesionSucursal = null;
             App.setRoot("login");
         } catch (IOException e) {
             e.printStackTrace();

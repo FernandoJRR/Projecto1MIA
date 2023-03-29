@@ -7,11 +7,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.List;
+import java.sql.SQLException;
 
-import com.universidad.mia_proyecto1.database.ModeloBodega;
-import com.universidad.mia_proyecto1.database.ModeloReporte;
-import com.universidad.mia_proyecto1.modelo.Producto;
+import com.universidad.mia_proyecto1.database.ModeloVentas;
+import com.universidad.mia_proyecto1.modelo.Cliente;
 
 /**
  * JavaFX App
@@ -41,18 +40,6 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        /* 
-        try {
-            List<Producto> productosBodega = ModeloBodega.getProductos();
-            System.out.println("ID\tCodigo\tNombre");
-            for (Producto producto : productosBodega) {
-                System.out.println(producto.getId()+" "+producto.getCodigo()+" "+producto.getNombre());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        */
-
         launch();
     }
     
