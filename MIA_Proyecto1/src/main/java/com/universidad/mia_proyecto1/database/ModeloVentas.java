@@ -175,8 +175,8 @@ public class ModeloVentas {
     }
     
     public static void crearVentaClienteNuevo(String nitCliente, String nombre, String vendedor, List<Integer> idProductos) throws SQLException, Exception {
-        crearCliente(nitCliente, nombre);;
-        crearVenta(nitCliente, nombre, idProductos);
+        crearCliente(nitCliente, nombre);
+        crearVenta(nitCliente, vendedor, idProductos);
     }
     
     public static List<ProductoVenta> getProductosSucursal(String sucursal) throws SQLException, Exception {
