@@ -40,7 +40,7 @@ public class ModeloVentas {
         }
     }
     
-    public static void crearVenta(String nitCliente, String vendedor, List<Integer> idProductos) throws SQLException,Exception {
+    public static int crearVenta(String nitCliente, String vendedor, List<Integer> idProductos) throws SQLException,Exception {
         int descuento;
         //Se calcula si existe un descuento
         //Se obtiene la ultima venta realizada por el cliente
@@ -120,6 +120,7 @@ public class ModeloVentas {
 
             updateProducto.executeUpdate();
         }
+        return descuento;
     }
     
     public static void crearVentaCF(String vendedor, List<Integer> idProductos) throws SQLException, Exception {

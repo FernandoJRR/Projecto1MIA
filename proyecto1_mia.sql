@@ -308,12 +308,6 @@ INSERT INTO control_productos.producto_ingresado (
 
 --Roles
 ---Administrador
----Bodega
----Inventario
----Ventas
-
--------------------ADMINISTRADOR--------------------------------
--- Permisos de roles
 GRANT USAGE ON SCHEMA control_usuarios TO administrador_electronic_homes;
 GRANT USAGE ON SCHEMA control_productos TO administrador_electronic_homes;
 GRANT USAGE ON SCHEMA control_sucursales TO administrador_electronic_homes;
@@ -329,6 +323,40 @@ GRANT SELECT ON TABLE control_ventas.venta TO administrador_electronic_homes;
 
 CREATE USER administrador01 WITH PASSWORD 'admin_01';
 GRANT administrador_electronic_homes TO administrador01;
+---Bodega
+GRANT USAGE ON SCHEMA control_productos TO gestor_bodega_electronic_homes;
+
+GRANT INSERT,UPDATE,SELECT ON TABLE control_productos.producto_ingresado TO gestor_bodega_electronic_homes;
+GRANT INSERT,UPDATE,SELECT ON TABLE control_productos.producto TO gestor_bodega_electronic_homes;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA control_productos TO gestor_bodega_electronic_homes;
+
+CREATE USER gestor_bodega01 WITH PASSWORD 'bodega_01';
+GRANT gestor_bodega_electronic_homes TO gestor_bodega01;
+---Inventario
+GRANT USAGE ON SCHEMA control_productos TO gestor_inventario_electronic_homes;
+
+GRANT UPDATE,SELECT ON TABLE control_productos.producto_ingresado TO gestor_inventario_electronic_homes;
+GRANT SELECT ON TABLE control_productos.producto TO gestor_inventario_electronic_homes;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA control_productos TO gestor_inventario_electronic_homes;
+
+CREATE USER gestor_inventario01 WITH PASSWORD 'inventario01';
+GRANT gestor_inventario_electronic_homes TO gestor_inventario01;
+---Ventas
+GRANT USAGE ON SCHEMA control_clientes TO vendedor_electronic_homes;
+GRANT USAGE ON SCHEMA control_productos TO vendedor_electronic_homes;
+GRANT USAGE ON SCHEMA control_ventas TO vendedor_electronic_homes;
+
+GRANT INSERT,UPDATE,SELECT ON TABLE control_clientes.cliente TO vendedor_electronic_homes;
+GRANT UPDATE,SELECT ON TABLE control_productos.producto_ingresado TO vendedor_electronic_homes;
+GRANT SELECT ON TABLE control_productos.producto TO vendedor_electronic_homes;
+GRANT INSERT,SELECT ON TABLE control_ventas.venta TO vendedor_electronic_homes;
+GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA control_productos TO vendedor_electronic_homes;
+GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA control_ventas TO vendedor_electronic_homes;
+
+CREATE USER vendedor01 WITH PASSWORD 'vendedor01';
+GRANT vendedor_electronic_homes TO vendedor01;
+
+-------------------ADMINISTRADOR--------------------------------
 
 select codigo_producto, count(codigo_producto) as cantidad 
   from control_productos.producto_ingresado 
@@ -488,15 +516,6 @@ SELECT codigo_producto, producto.nombre, SUM(precio) as total_producto
 ;
 
 ---------------------BODEGA-------------------------------------
--- Permisos de roles
-GRANT USAGE ON SCHEMA control_productos TO gestor_bodega_electronic_homes;
-
-GRANT INSERT,UPDATE,SELECT ON TABLE control_productos.producto_ingresado TO gestor_bodega_electronic_homes;
-GRANT INSERT,UPDATE,SELECT ON TABLE control_productos.producto TO gestor_bodega_electronic_homes;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA control_productos TO gestor_bodega_electronic_homes;
-
-CREATE USER gestor_bodega01 WITH PASSWORD 'bodega_01';
-GRANT gestor_bodega_electronic_homes TO gestor_bodega01;
 
 -- Insertar producto (existente) en bodega
 INSERT INTO control_productos.producto_ingresado ( 
@@ -544,15 +563,6 @@ SELECT id, codigo, nombre
   WHERE en_bodega = true;
 
 --------------------------INVENTARIO-------------------------------
--- Permisos de roles
-GRANT USAGE ON SCHEMA control_productos TO gestor_inventario_electronic_homes;
-
-GRANT UPDATE,SELECT ON TABLE control_productos.producto_ingresado TO gestor_inventario_electronic_homes;
-GRANT SELECT ON TABLE control_productos.producto TO gestor_inventario_electronic_homes;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA control_productos TO gestor_inventario_electronic_homes;
-
-CREATE USER gestor_inventario01 WITH PASSWORD 'inventario01';
-GRANT gestor_inventario_electronic_homes TO gestor_inventario01;
 
 -- Seleccionar productos FUERA de la sucursal
 SELECT id, codigo_producto, nombre, sucursal, en_bodega 
@@ -584,20 +594,6 @@ UPDATE control_productos.producto_ingresado
 ;
 
 -------------------------VENDEDOR----------------------------------
--- Permisos de roles
-GRANT USAGE ON SCHEMA control_clientes TO vendedor_electronic_homes;
-GRANT USAGE ON SCHEMA control_productos TO vendedor_electronic_homes;
-GRANT USAGE ON SCHEMA control_ventas TO vendedor_electronic_homes;
-
-GRANT INSERT,UPDATE,SELECT ON TABLE control_clientes.cliente TO vendedor_electronic_homes;
-GRANT UPDATE,SELECT ON TABLE control_productos.producto_ingresado TO vendedor_electronic_homes;
-GRANT SELECT ON TABLE control_productos.producto TO vendedor_electronic_homes;
-GRANT INSERT,SELECT ON TABLE control_ventas.venta TO vendedor_electronic_homes;
-GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA control_productos TO vendedor_electronic_homes;
-GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA control_ventas TO vendedor_electronic_homes;
-
-CREATE USER vendedor01 WITH PASSWORD 'vendedor01';
-GRANT vendedor_electronic_homes TO vendedor01;
 
 -- Select cliente
 SELECT *

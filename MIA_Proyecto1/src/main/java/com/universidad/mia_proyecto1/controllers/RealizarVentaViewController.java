@@ -179,6 +179,7 @@ public class RealizarVentaViewController implements Initializable {
 						}
 						try {
 							ModeloVentas.crearVentaClienteNuevo(nitField.getText(), nombreClienteField.getText(), App.sesionUser, idProductos);
+							invalidDetails.setText("Venta existosa!");
 						} catch (SQLException e) {
 							invalidDetails.setStyle(formatoMensajeError);
 							invalidDetails.setText("Ha ocurrido un error, intenta mas tarde");
@@ -204,8 +205,21 @@ public class RealizarVentaViewController implements Initializable {
 								idProductos.add(spinner.getValue());
 							}
 							
-							ModeloVentas.crearVenta(nitField.getText(), App.sesionUser, idProductos);
-							invalidDetails.setText("Venta existosa!");
+							int descuentoRealizado = ModeloVentas.crearVenta(nitField.getText(), App.sesionUser, idProductos);
+							switch (descuentoRealizado) {
+								case 2:
+									invalidDetails.setText("Venta existosa! con 2% de descuento!");
+									break;
+								case 5:
+									invalidDetails.setText("Venta existosa! con 5% de descuento!");
+									break;
+								case 10:
+									invalidDetails.setText("Venta existosa! con 10% de descuento!");
+									break;
+								default:
+									invalidDetails.setText("Venta existosa!");
+									break;
+							}
 						}
 					} catch (ClienteNoExisteException e){
 						invalidDetails.setStyle(formatoMensajeError);
